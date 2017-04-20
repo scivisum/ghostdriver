@@ -24,10 +24,14 @@ unknown_arg() {
 
 build() {
     # Build & Upload the tar.gz package
+    mkdir svGhostDriver
+    cp -r src svGhostDriver/
+    touch svGhostDriver/__init__.py
     python setup.py register -r "${pypi_register}"
     python setup.py sdist upload -r "${pypi_register}"
     python setup.py register -r "${pypi_load_register}"
     python setup.py sdist upload -r "${pypi_load_register}"
+    rm -rf svGhostDriver
 }
 
 # Parse the arguments

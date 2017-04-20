@@ -1,2 +1,5 @@
+exclude *
+prune *
+graft svGhostDriver
 include VERSION
-recursive-include src *
+include setup.py
