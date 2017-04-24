@@ -934,6 +934,7 @@ ghostdriver.Session = function(desiredCapabilities) {
         isLoading : _isLoading,
         getLog: _getLog,
         getLogTypes: _getLogTypes,
+        clearLogs: function() { return _clearPageLog(_getCurrentWindow()); },
         getFrameOffset: _getFrameOffset
     };
 };

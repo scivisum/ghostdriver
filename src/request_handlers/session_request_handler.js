@@ -198,6 +198,8 @@ ghostdriver.SessionReqHand = function(session) {
             return;
         } else if (req.urlParsed.chunks[0] === _const.LOG && _session.getLogTypes().indexOf(req.urlParsed.chunks[1]) >= 0 && req.method === "GET") {  //< ".../log/LOG_TYPE"
             _getLog(req, res, req.urlParsed.chunks[1]);
+        } else if (req.urlParsed.chunks[0] === _const.LOG && req.method === "DELETE") {
+            _clearLogs(req, res);
         } else if (req.urlParsed.file == _const.FILE && req.method === "POST") {
             _postUploadFileCommand(req, res);
             return;
@@ -923,6 +925,10 @@ ghostdriver.SessionReqHand = function(session) {
 
     _getLog = function (req, res, logType) {
         res.success(_session.getId(), _session.getLog(logType));
+    };
+
+    _clearLogs = function (req, res) {
+        res.success(_session.getId(), _session.clearLogs());
     };
 
     // public:
