@@ -258,16 +258,16 @@ ghostdriver.Session = function(desiredCapabilities) {
         }
 
         thisPage._onLoadFinishedLatch = false;
-        
+
         if (_shouldWaitForLoad()) {
             // Register Callbacks to grab any async event we are interested in
             this.setOneShotCallback("onLoadFinished", function (status) {
                 _log.debug("_execFuncAndWaitForLoadDecorator", "onLoadFinished: " + status);
-    
+
                 onLoadFinishedArgs = Array.prototype.slice.call(arguments);
             });
         }
-        
+
         // Execute "code"
         if (execTypeOpt === "eval") {
             // Remove arguments used by this function before providing them to the target code.
@@ -281,7 +281,7 @@ ghostdriver.Session = function(desiredCapabilities) {
             // "Apply" the provided function
             code.apply(this, args);
         }
-        
+
         if (!_shouldWaitForLoad()) {
             onLoadFunc.call(thisPage, "success");
             return;
@@ -352,14 +352,14 @@ ghostdriver.Session = function(desiredCapabilities) {
             // Retry in 10ms
             setTimeout(checkDoneLoading, 10);
         };
-        
+
         if (_shouldWaitForLoad()) {
             checkDoneLoading();
         } else {
             callback.call(thisPage);
         }
     },
-    
+
     _shouldWaitForLoad = function() {
         return _negotiatedCapabilities["webdriver.load.strategy"] === "normal";
     }
@@ -855,7 +855,6 @@ ghostdriver.Session = function(desiredCapabilities) {
             tmp.push(_createLogEntry(
                 "INFO",
                 JSON.stringify(har.createHar(page, page.resources.log))));
-            page.resources.log = [];
             return tmp;
         }
 
