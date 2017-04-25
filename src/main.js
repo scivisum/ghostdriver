@@ -34,7 +34,7 @@ ghostdriver = {
     system  : require("system"),
     hub     : require("./hub_register.js"),
     logger  : require("./logger.js"),
-//    webdriver_logger  : require("./webdriver_logger.js"),
+    webdriver_logger  : require("./webdriver_logger.js"),
     config  : null,                         //< this will be set below
     version : "2.0.0"
 };
