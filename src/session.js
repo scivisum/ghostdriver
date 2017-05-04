@@ -199,6 +199,7 @@ ghostdriver.Session = function(desiredCapabilities) {
                     if(url.search(pageBlacklist[i]) !== -1) {
                         net.abort();
                         _log.debug("blacklist abort " + url);
+                        return true;
                     }
                 }
             }
@@ -217,6 +218,7 @@ ghostdriver.Session = function(desiredCapabilities) {
                 }
                 net.abort();
                 _log.debug("whitelist abort " + url);
+                return true;
             }
         }
         if (k.indexOf(_capsPageSettingsProxyPref) === 0) {
@@ -550,8 +552,18 @@ ghostdriver.Session = function(desiredCapabilities) {
         };
 
         page.onResourceRequested = function (req, net) {
-            if(_pageWhitelistFilter) { _pageWhitelistFilter(req.url, net); }
-            if(_pageBlacklistFilter) { _pageBlacklistFilter(req.url, net); }
+            if(_pageWhitelistFilter) {
+                if (_pageWhitelistFilter(req.url, net)) {
+                    // don't track a request that we want to ignore (aborted)
+                    return;
+                }
+            }
+            if(_pageBlacklistFilter) {
+                if (_pageBlacklistFilter(req.url, net)) {
+                    // don't track a request that we want to ignore (aborted)
+                    return;
+                }
+            }
 
             _log.debug("page.onResourceRequested", JSON.stringify(req));
 
