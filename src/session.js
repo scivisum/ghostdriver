@@ -607,12 +607,6 @@ ghostdriver.Session = function(desiredCapabilities) {
                 error: req
             });
         };
-        page.onNavigationRequested = function(url, type, willNavigate, main) {
-            // Clear page log before page loading
-            if (main && willNavigate) {
-                _clearPageLog(page);
-            }
-        };
 
         _decoratePromptBehavior(page);
 
