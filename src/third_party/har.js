@@ -99,41 +99,6 @@ exports.createHar = function (page, resources) {
             fillInHeaders(startReply);
         }
 
-        // PhantomJS calls onResourceError for normal HTTP errors with less information than we
-        // already have from onResourceReceived. So ignore the error in that case.
-        if (error && error.errorCode < 400) {
-            // according to http://qt-project.org/doc/qt-4.8/qnetworkreply.html
-            // Synchronised with browsermob-proxy.
-            switch (error.errorCode) {
-                case 1:
-                    error.errorCode = "CONNECTION_REFUSED";
-                    break;
-                case 2:
-                    error.errorCode = "CONNECTION_CLOSED";
-                    break;
-                case 3:
-                    error.errorCode = "UNKNOWN_HOST";
-                    break;
-                case 4:
-                    error.errorCode = "CONNECTION_TIMED_OUT";
-                    break;
-                case 5:
-                    error.errorCode = "OPERATION_CANCELLED";
-                    break;
-                case 6:
-                    error.errorCode = "SSL";
-                    break;
-                default:
-                    error.errorCode = "CONNECTION_GENERIC";
-                    break;
-            }
-
-            entry.response.status = -998;
-            entry.response.statusText = error.errorString;
-            entry.response.error.code = error.errorCode;
-            entry.response.error.message = error.errorString;
-        }
-
         if (endReply) {
             entry.time = endReply.time - request.time;
             if (startReply) {
@@ -145,6 +110,41 @@ exports.createHar = function (page, resources) {
             }
         }
 
+        // PhantomJS calls onResourceError for normal HTTP errors with less information than we
+        // already have from onResourceReceived. So ignore the error in that case.
+        if (error && error.errorCode < 400) {
+            // according to http://qt-project.org/doc/qt-4.8/qnetworkreply.html
+            // Synchronised with browsermob-proxy.
+            var errorCode;
+            switch (error.errorCode) {
+                case 1:
+                    errorCode = "CONNECTION_REFUSED";
+                    break;
+                case 2:
+                    errorCode = "CONNECTION_CLOSED";
+                    break;
+                case 3:
+                    errorCode = "UNKNOWN_HOST";
+                    break;
+                case 4:
+                    errorCode = "CONNECTION_TIMED_OUT";
+                    break;
+                case 5:
+                    errorCode = "OPERATION_CANCELLED";
+                    break;
+                case 6:
+                    errorCode = "SSL";
+                    break;
+                default:
+                    errorCode = "CONNECTION_GENERIC";
+                    break;
+            }
+
+            entry.response.status = -998;
+            entry.response.statusText = error.errorString;
+            entry.response.error.code = errorCode;
+            entry.response.error.message = error.errorString;
+        }
         entries.push(entry);
     });
 
