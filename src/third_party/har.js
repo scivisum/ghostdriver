@@ -85,7 +85,9 @@ exports.createHar = function (page, resources) {
         };
 
         function fillInHeaders (reply) {
-            entry.response.status = reply.status;
+            if (reply.status !== null) {
+                entry.response.status = reply.status;
+            }
             entry.response.statusText = reply.statusText;
             entry.response.headers = reply.headers;
             entry.response.content.mimeType = reply.contentType;
@@ -112,7 +114,7 @@ exports.createHar = function (page, resources) {
 
         // PhantomJS calls onResourceError for normal HTTP errors with less information than we
         // already have from onResourceReceived. So ignore the error in that case.
-        if (error && error.errorCode < 400) {
+        if (error && entry.response.status === -999) {
             // according to http://qt-project.org/doc/qt-4.8/qnetworkreply.html
             // Synchronised with browsermob-proxy.
             var errorCode;
