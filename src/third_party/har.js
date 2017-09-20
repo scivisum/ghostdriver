@@ -105,11 +105,13 @@ exports.createHar = function (page, resources) {
             entry.time = endReply.time - request.time;
 
             if (entry.time > 3600000) {
-                // Found wierd bug (#150127455)
+                // Found weird bug (#150127455)
                 entry.debug = {};
                 entry.debug.endReplyTime = endReply.time.valueOf();
                 entry.debug.requestTime = request.time.valueOf();
-                entry.time -= 3600000;
+
+                request.time = new Date(request.time.getTime() + 3600000);
+                entry.time = endReply.time - request.time;
             }
 
             if (startReply) {
@@ -118,7 +120,7 @@ exports.createHar = function (page, resources) {
                 entry.timings.receive = endReply.time - startReply.time;
 
                 if (entry.timings.receive < 0) {
-                    // Found wierd bug (#150127455)
+                    // Found weird bug (#150127455)
                     entry.debug = {};
                     entry.debug.startReplyTime = startReply.time.valueOf();
                     entry.debug.endReplyTime = endReply.time.valueOf();
