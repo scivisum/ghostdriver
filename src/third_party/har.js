@@ -32,6 +32,15 @@ exports.createHar = function (page, resources) {
             endReply = resource.endReply,
             error = resource.error;
 
+        function setTimeFromTimestamp(event) {
+            if (event) {
+                event.time = new Date(event.timestamp);
+            }
+        }
+        setTimeFromTimestamp(request);
+        setTimeFromTimestamp(startReply);
+        setTimeFromTimestamp(endReply);
+
         if (!request) {
             return;
         }
@@ -104,27 +113,10 @@ exports.createHar = function (page, resources) {
         if (endReply) {
             entry.time = endReply.time - request.time;
 
-            if (entry.time > 3600000) {
-                // Found wierd bug (#150127455)
-                entry.debug = {};
-                entry.debug.endReplyTime = endReply.time.valueOf();
-                entry.debug.requestTime = request.time.valueOf();
-                entry.time -= 3600000;
-            }
-
             if (startReply) {
                 // Certain requests (redirects, synchronous AJAX requests) will not receive
                 // onResourceReceived with stage "start".
                 entry.timings.receive = endReply.time - startReply.time;
-
-                if (entry.timings.receive < 0) {
-                    // Found wierd bug (#150127455)
-                    entry.debug = {};
-                    entry.debug.startReplyTime = startReply.time.valueOf();
-                    entry.debug.endReplyTime = endReply.time.valueOf();
-                    entry.debug.requestTime = request.time.valueOf();
-                    delete entry.timings.receive;
-                }
             } else {
                 fillInHeaders(endReply);
             }
