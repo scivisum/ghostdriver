@@ -555,18 +555,13 @@ ghostdriver.Session = function(desiredCapabilities) {
             _log.debug("page.onLoadFinished");
         };
 
-        page._numResources = 0;
+        page.onInitialized = function () {
+            _log.debug("onInitialized");
+            var ret = page.injectJs("third_party/es6-promise.auto.min.js");
+            _log.debug("Injected ES6 promise polyfill: " + ret);
+        };
+
         page.onResourceRequested = function (req, net) {
-            page._numResources++;
-            if (page._numResources === 2) {
-                // We're about to fetch the second resource, i.e. the first one after the main
-                // page. This is the time to polyfill: the javascript environment is ready, but
-                // no scripts have been loaded. (We're too late if the page itself needs the
-                // polyfill, but we can't get any earlier - `onResourceReceived` for the page is
-                // too early; the polyfill does nothing.)
-                var ret = page.injectJs("third_party/es6-promise.auto.min.js");
-                _log.debug("Injected ES6 promise polyfill: " + ret);
-            }
 
             if(_pageWhitelistFilter) {
                 if (_pageWhitelistFilter(req.url, net)) {
