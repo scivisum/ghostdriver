@@ -461,6 +461,10 @@ ghostdriver.Session = function(desiredCapabilities) {
     _decorateNewWindow = function(page) {
         var k;
 
+        // `page.libraryPath` is the CWD of the process, which is not useful; whereas
+        // `phantom.libraryPath` is this directory.
+        page.libraryPath = phantom.libraryPath;
+
         // Decorating:
         // 0. Pages lifetime will be managed by Driver, not the pages
         page.ownsPages = false;
@@ -551,7 +555,14 @@ ghostdriver.Session = function(desiredCapabilities) {
             _log.debug("page.onLoadFinished");
         };
 
+        page.onInitialized = function () {
+            _log.debug("onInitialized");
+            var ret = page.injectJs("third_party/es6-promise.auto.min.js");
+            _log.debug("Injected ES6 promise polyfill: " + ret);
+        };
+
         page.onResourceRequested = function (req, net) {
+
             if(_pageWhitelistFilter) {
                 if (_pageWhitelistFilter(req.url, net)) {
                     // don't track a request that we want to ignore (aborted)
